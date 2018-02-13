@@ -54,7 +54,16 @@ trait HasPermission
                             ! $value ?: $permissions[$slug][$clearance] = true;
                         } else {
                             if ($permissions[$slug][$clearance] != $value) {
-                                $permissions[$slug][$clearance] = $value;
+                                if (config('acl.most_permissive_wins', false)) {
+                                    /**
+                                     * If acl.most_permissive_wins, only overwrite previous value if it's true
+                                     */
+                                    if ($value) {
+                                        $permissions[$slug][$clearance] = $value;
+                                    }
+                                } else {
+                                    $permissions[$slug][$clearance] = $value;
+                                }
                             }
                         }
                     }
